@@ -1,3 +1,5 @@
+import java.nio.file.Files
+
 apply plugin: "com.android.application"
 apply plugin: "findbugs"
 apply plugin: "pmd"
@@ -7,7 +9,7 @@ def ABORT_ON_CHECK_FAILURE = false
 tasks.withType(Test) {
     systemProperty "MiFirmwareDir", System.getProperty("MiFirmwareDir", null)
     systemProperty "logback.configurationFile", System.getProperty("user.dir", null) + "/app/src/main/assets/logback.xml"
-    systemProperty "GB_LOGFILES_DIR", java.nio.file.Files.createTempDirectory("gblog").toString()
+    systemProperty "GB_LOGFILES_DIR", Files.createTempDirectory("gblog").toString()
 }
 
 android {
@@ -22,7 +24,7 @@ android {
     defaultConfig {
         applicationId "nodomain.freeyourgadget.gadgetbridge"
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
 
         // Note: always bump BOTH versionCode and versionName!
         versionName "0.32.4"
@@ -128,17 +130,6 @@ task pmd(type: Pmd) {
     source "src"
     include "**/*.java"
     exclude "**/gen/**"
-
-    reports {
-        xml.enabled = false
-        html.enabled = true
-        xml {
-            destination "$project.buildDir/reports/pmd/pmd.xml"
-        }
-        html {
-            destination "$project.buildDir/reports/pmd/pmd.html"
-        }
-    }
 }
 
 task findbugs(type: FindBugs) {
@@ -149,14 +140,4 @@ task findbugs(type: FindBugs) {
     classes = files("${project.rootDir}/app/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes")
     source = fileTree("src/main/java/")
     classpath = files()
-    reports {
-        xml.enabled = false
-        html.enabled = true
-        xml {
-            destination "$project.buildDir/reports/findbugs/findbugs-output.xml"
-        }
-        html {
-            destination "$project.buildDir/reports/findbugs/findbugs-output.html"
-        }
-    }
 }
